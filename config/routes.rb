@@ -6,9 +6,6 @@ Rails.application.routes.draw do
   put 'schedules/:id' => 'schedules#putSchedules'
   delete 'schedules/:id' => 'schedules#deleteSchedules'
 
-  get 'users' => 'users#index'
-  post 'users' => 'users#create'
-  put 'users/:id' => 'users#update'
-  delete 'users/:id' => 'users#destroy'
+  resources :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
