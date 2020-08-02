@@ -3,7 +3,7 @@ class UsersController < ApplicationController
 
   # GET /users
   def index
-    @users = User.select(:id, :name, :is_admin, :password_digest, :email, :fails_count)
+    @users = User.select(:id, :name, :is_admin, :email, :fails_count)
 
     render json: @users
   end
