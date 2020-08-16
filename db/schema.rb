@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_10_061124) do
+ActiveRecord::Schema.define(version: 2020_08_16_221200) do
 
   create_table "schedule_contents", force: :cascade do |t|
     t.string "title", limit: 50, null: false
@@ -26,14 +26,14 @@ ActiveRecord::Schema.define(version: 2020_05_10_061124) do
     t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "content_id"
+    t.integer "content_id", null: false
     t.index ["content_id"], name: "index_schedules_on_content_id"
     t.index ["user_id"], name: "index_schedules_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
     t.string "name", limit: 20, null: false
-    t.string "is_admin", in: ["0", "1"], null: false
+    t.string "is_admin", null: false
     t.string "password_digest", limit: 60, null: false
     t.string "email", limit: 100, null: false
     t.integer "fails_count", default: 0, null: false
