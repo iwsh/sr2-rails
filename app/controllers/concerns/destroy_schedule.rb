@@ -23,8 +23,7 @@ module DestroySchedule
         @scheduleContent.delete
       end
     rescue ActiveRecord::RecordInvalid => e
-      @status = 400
-      render status: @status
+      render status: :internal_server_error
     end
   end
 end

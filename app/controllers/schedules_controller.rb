@@ -8,23 +8,20 @@ class SchedulesController < ApplicationController
   # GET /schedules/2020/8
   def getSchedules
     require 'date'
-    if params[:year].present? && params[:year].present?
+    if params[:year].present? && params[:month].present?
       year = params[:year].to_i
       month = params[:month].to_i
     else
-      @status = 400
-      render status: @status
+      render status: :bad_request
     end
-    userId = @user['id']
-    @schedules = selectSchedule(userId, year, month)
+    @schedules = selectSchedule(@user['id'], year, month)
     render status: :ok, json: @schedules
   end
 
   # POST /schedules
   def postSchedules
-    userId = @user['id']
     schedule = Hash.new
-    schedule[:user_id] = userId
+    schedule[:user_id] = @user['id']
     schedule[:date] = params['date']
     schedule[:title] = params['title']
     schedule[:detail] = params['detail']
