@@ -5,14 +5,8 @@ class ApplicationController < ActionController::API
     def login_check
       require 'base64'
 
-      p request.headers[:email]
-      p request.headers[:password]
-
       email = Base64.decode64(request.headers[:email])
       password = Base64.decode64(request.headers[:password])
-
-      p email
-      p password
 
       unless validation(email, password)
         render status: :unauthorized

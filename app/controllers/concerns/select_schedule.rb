@@ -22,7 +22,6 @@ module SelectSchedule
         ended_at: schedule.schedule_content.ended_at,
         detail: schedule.schedule_content.detail
       }
-      p displaySchedule
       displaySchedules[day].push(displaySchedule)
     }
     return displaySchedules
