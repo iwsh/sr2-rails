@@ -14,7 +14,16 @@ module SelectSchedule
       if displaySchedules[day].nil?
         displaySchedules[day] = []
       end
-      displaySchedules[day].push(schedule)
+      displaySchedule = {
+        id: schedule.id,
+        date: schedule.date,
+        title: schedule.schedule_content.title,
+        started_at: schedule.schedule_content.started_at,
+        ended_at: schedule.schedule_content.ended_at,
+        detail: schedule.schedule_content.detail
+      }
+      p displaySchedule
+      displaySchedules[day].push(displaySchedule)
     }
     return displaySchedules
   end

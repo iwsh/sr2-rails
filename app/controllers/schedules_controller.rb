@@ -1,9 +1,12 @@
 class SchedulesController < ApplicationController
   # before_action :set_schedule, only: [:show, :update, :destroy]
+  include SetScheduleById
   include SelectSchedule
   include InsertSchedule
   include UpdateSchedule
   include DestroySchedule
+
+  before_action :validationSchedule, only: [:postSchedules, :putSchedules]
 
   # GET /schedules/2020/8
   def getSchedules
@@ -11,17 +14,17 @@ class SchedulesController < ApplicationController
     if params[:year].present? && params[:month].present?
       year = params[:year].to_i
       month = params[:month].to_i
+      @schedules = selectSchedule(@myData[:id], year, month)
+      render status: :ok, json: @schedules
     else
       render status: :bad_request
     end
-    @schedules = selectSchedule(@user['id'], year, month)
-    render status: :ok, json: @schedules
   end
 
   # POST /schedules
   def postSchedules
     schedule = Hash.new
-    schedule[:user_id] = @user['id']
+    schedule[:user_id] = @myData[:id]
     schedule[:date] = params['date']
     schedule[:title] = params['title']
     schedule[:detail] = params['detail']
@@ -38,8 +41,11 @@ class SchedulesController < ApplicationController
 
   # PUT /schedules/1
   def putSchedules
+    if params[:id].blank?
+      render status: :bad_request
+    end
     schedule = Hash.new
-    schedule[:user_id] = @user['id']
+    schedule[:user_id] = @myData[:id]
     schedule[:id] = params[:id]
     schedule[:date] = params['date']
     schedule[:title] = params['title']
@@ -51,32 +57,46 @@ class SchedulesController < ApplicationController
       schedule[:started_at] = params['started_at'][0..4]+":00"
       schedule[:ended_at] = params['ended_at'][0..4]+":00"
     end
-    updateSchedule(schedule)
-    render status: :ok
+
+    error = setScheduleById()
+    if error == 'not_found'
+      render status: :not_found
+    elsif error == 'forbidden'
+      render status: :forbidden
+    elsif error.blank?
+      updateSchedule(schedule)
+      render status: :ok
+    else
+      render status: :internal_server_error
+    end
   end
 
   # DELETE /schedules/1
   def deleteSchedules
-    ids = Hash.new
-    ids[:user_id] = @user['id']
-    ids[:id] = params[:id]
-    destroySchedule(ids)
-    render status: :ok
+    if params[:id].blank?
+      render status: :bad_request
+    end
+
+    error = setScheduleById()
+    if error == 'not_found'
+      render status: :not_found
+    elsif error == 'forbidden'
+      render status: :forbidden
+    elsif error.blank?
+      destroySchedule()
+      render status: :ok
+    else
+      render status: :internal_server_error
+    end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_schedule_by_id
-      @schedule = Schedule.find(params[:id])
-      unless @schedule
-        render status: :not_found
-      end
-      if @schedule.content_id != @user['id']
-        render status: :forbidden
-      end
-      @scheduleContent = ScheduleContent.find(@schedule.content_id)
-      unless @scheduleContent
-        render status: :not_found
+    # Check if the request params are valid.
+    def validationSchedule
+      if params['date'].blank? || params['title'].blank?
+        render status: :bad_request
+      elsif params['allday'].blank? && ((params['started_at'].blank? || params['ended_at'].blank?) || (params['started_at'][0..1] > params['ended_at'][0..1] || (params['started_at'][0..1] == params['ended_at'][0..1] && params['started_at'][3..4] >= params['ended_at'][3..4])))
+        render status: :bad_request
       end
     end
 end

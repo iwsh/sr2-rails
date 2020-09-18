@@ -4,11 +4,7 @@ module UpdateSchedule
   def updateSchedule(scheduleInfo)
     begin
       ActiveRecord::Base.transaction do
-        scheduleForId = Schedule.where(id: scheduleInfo[:id], user_id: scheduleInfo[:user_id])
-        scheduleContentId = scheduleForId[0].content_id
-
-        scheduleContent = ScheduleContent.find_by(id: scheduleContentId)
-        scheduleContent.update!(
+        @scheduleContent.update!(
           title: scheduleInfo[:title],
           started_at: scheduleInfo[:started_at],
           ended_at: scheduleInfo[:ended_at],
@@ -16,10 +12,9 @@ module UpdateSchedule
           updated_at: DateTime.now
         )
 
-        schedule = Schedule.find_by(id: scheduleInfo[:id])
-        schedule.update!(
+        @schedule.update!(
           date: scheduleInfo[:date],
-          content_id: scheduleContentId,
+          content_id: @scheduleContent.id,
           updated_at: DateTime.now
         )
       end

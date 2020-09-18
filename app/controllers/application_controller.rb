@@ -5,26 +5,32 @@ class ApplicationController < ActionController::API
     def login_check
       require 'base64'
 
+      p request.headers[:email]
+      p request.headers[:password]
+
       email = Base64.decode64(request.headers[:email])
       password = Base64.decode64(request.headers[:password])
+
+      p email
+      p password
 
       unless validation(email, password)
         render status: :unauthorized
       end
 
-      # @user = User.select(:id, :name, :is_admin, :password_digest, :email).find_by(email: email)
-      @user = User.find_by(email: email)
+      @myData = User.find_by(email: email)
 
-      if @user
-        if @user.authenticate(password)
-          if @user.fails_count >= 3
+      if @myData
+        if @myData.authenticate(password)
+          if @myData.fails_count >= 3
             render status: :locked # 423
           else
-            @user.update(fails_count: 0, last_login_at: DateTime.now, record_timestamps: false)
+            @myData.update(fails_count: 0, last_login_at: DateTime.now, record_timestamps: false)
+            @myData = {id: @myData.id, name: @myData.name, is_admin: @myData.is_admin}
           end
         else
-          if @user.fails_count < 3
-            @user.increment!(:fails_count)
+          if @myData.fails_count < 3
+            @myData.increment!(:fails_count)
           end
           render status: :unauthorized
         end
