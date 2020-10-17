@@ -12,19 +12,18 @@ class ApplicationController < ActionController::API
         render status: :unauthorized
       end
 
-      @myData = User.find_by(email: email)
+      @accessUser = User.find_by(email: email)
 
-      if @myData
-        if @myData.authenticate(password)
-          if @myData.fails_count >= 3
+      if @accessUser
+        if @accessUser.authenticate(password)
+          if @accessUser.fails_count >= 3
             render status: :locked # 423
           else
-            @myData.update(fails_count: 0, last_login_at: DateTime.now, record_timestamps: false)
-            @myData = {id: @myData.id, name: @myData.name, is_admin: @myData.is_admin}
+            @accessUser.update(fails_count: 0, last_login_at: DateTime.now, record_timestamps: false)
           end
         else
-          if @myData.fails_count < 3
-            @myData.increment!(:fails_count)
+          if @accessUser.fails_count < 3
+            @accessUser.increment!(:fails_count)
           end
           render status: :unauthorized
         end

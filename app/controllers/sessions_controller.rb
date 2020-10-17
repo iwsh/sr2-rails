@@ -1,5 +1,6 @@
 class SessionsController < ApplicationController
   def login
-    render status: :ok, json: @myData
+    res = {id: @accessUser.id, name: @accessUser.name, is_admin: @accessUser.is_admin}
+    render status: :ok, json: res
   end
 end
