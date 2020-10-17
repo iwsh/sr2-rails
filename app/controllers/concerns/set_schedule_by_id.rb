@@ -6,7 +6,7 @@ module SetScheduleById
     @schedule = Schedule.find(params[:id])
     if @schedule.blank?
       error = 'not_found'
-    elsif @schedule.user_id != @myData[:id]
+    elsif @schedule.user_id != @accessUser[:id]
       error = 'forbidden'
     else
       @scheduleContent = ScheduleContent.find(@schedule.content_id)
