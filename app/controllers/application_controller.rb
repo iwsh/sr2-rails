@@ -40,4 +40,8 @@ class ApplicationController < ActionController::API
       end
       return valid
     end
+<<<<<<< HEAD
 end
+=======
+end
+>>>>>>> feature/SR2-52
