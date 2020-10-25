@@ -2,41 +2,37 @@ class ApplicationController < ActionController::API
   before_action :login_check
 
   private
-    def login_check
-      require 'base64'
 
-      email = Base64.decode64(request.headers[:email])
-      password = Base64.decode64(request.headers[:password])
+  def login_check
+    require 'base64'
 
-      unless validation(email, password)
-        render status: :unauthorized
-      end
+    email = Base64.decode64(request.headers[:email])
+    password = Base64.decode64(request.headers[:password])
 
-      @accessUser = User.find_by(email: email)
+    render status: :unauthorized and return unless validation(email, password)
 
-      if @accessUser
-        if @accessUser.authenticate(password)
-          if @accessUser.fails_count >= 3
-            render status: :locked # 423
-          else
-            @accessUser.update(fails_count: 0, last_login_at: DateTime.now, record_timestamps: false)
-          end
+    @access_user = User.find_by(email: email)
+    if @access_user
+      if @access_user.authenticate(password)
+        if @access_user.fails_count >= 3
+          render status: :locked # 423
         else
-          if @accessUser.fails_count < 3
-            @accessUser.increment!(:fails_count)
-          end
-          render status: :unauthorized
+          @access_user.update(
+            fails_count: 0,
+            last_login_at: DateTime.now,
+            record_timestamps: false
+          )
         end
       else
+        @access_user.increment!(:fails_count) if @access_user.fails_count < 3
         render status: :unauthorized
       end
+    else
+      render status: :unauthorized
     end
+  end
 
-    def validation(email, password)
-      valid = true
-      if email == '' || password == ''
-        valid = false
-      end
-      return valid
-    end
+  def validation(email, password)
+    email == '' || password == '' ? false : true
+  end
 end
