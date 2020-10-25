@@ -6,7 +6,7 @@ class SchedulesController < ApplicationController
   include UpdateSchedule
   include DestroySchedule
 
-  before_action :validationSchedule, only: [:postSchedules, :putSchedules]
+  before_action :validate_schedule, only: [:postSchedules, :putSchedules]
 
   # GET /schedules/2020/8
   def getSchedules
@@ -92,7 +92,7 @@ class SchedulesController < ApplicationController
 
   private
   # Check if the request params are valid.
-  def validationSchedule
+  def validate_schedule
     if params['date'].blank? || params['title'].blank?
       puts 'VALIDATION_ERROR: no "date" or "title" in request body.'
       render status: :bad_request
