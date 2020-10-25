@@ -96,7 +96,7 @@ class SchedulesController < ApplicationController
     if params['date'].blank? || params['title'].blank?
       puts 'VALIDATION_ERROR: no "date" or "title" in request body.'
       render status: :bad_request
-    elsif params['allday'].blank? && params['started_at'].blank? || params['ended_at'].blank? || params['started_at'][0..3] > params['ended_at'][0..3]
+    elsif params['allday'].blank? && params['started_at'].blank? || params['ended_at'].blank? || params['started_at'][0..4] > params['ended_at'][0..4]
       puts 'VALIDATION_ERROR: time-parameter in request body is incorrect.'
       render status: :bad_request
     end
