@@ -14,12 +14,20 @@ module SelectSchedule
       if displaySchedules[day].nil?
         displaySchedules[day] = []
       end
+      if schedule.schedule_content.started_at == "" || schedule.schedule_content.ended_at == ""
+        schedule.schedule_content.started_at = ""
+        schedule.schedule_content.ended_at = ""
+        allday = true
+      else
+        allday = false
+      end
       displaySchedule = {
         id: schedule.id,
         date: schedule.date,
         title: schedule.schedule_content.title,
         started_at: schedule.schedule_content.started_at,
         ended_at: schedule.schedule_content.ended_at,
+        allday: allday,
         detail: schedule.schedule_content.detail
       }
       displaySchedules[day].push(displaySchedule)
