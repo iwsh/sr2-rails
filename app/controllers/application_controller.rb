@@ -1,16 +1,17 @@
 class ApplicationController < ActionController::API
   before_action :login_check
+  include ActionController::HttpAuthentication::Basic
 
   private
 
   def login_check
     require 'base64'
 
-    render status: :unauthorized and return if request.headers[:AuthHeader].nil?
+    render status: :unauthorized and return if request.headers[:Authorization].nil?
 
-    auth_header = Base64.decode64(request.headers[:AuthHeader])
-    email = auth_header[/(.*)\:/, 1]
-    password = auth_header[/\:(.*)/, 1]
+    auth_header = user_name_and_password(request)
+    email = auth_header[0]
+    password = auth_header[1]
 
     render status: :unauthorized and return unless validation(email, password)
 
