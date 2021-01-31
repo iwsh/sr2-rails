@@ -14,7 +14,7 @@ class SchedulesController < ApplicationController
     if params[:year].present? && params[:month].present?
       year = params[:year].to_i
       month = params[:month].to_i
-      @schedules = selectSchedule(@accessUser[:id], year, month)
+      @schedules = selectSchedule(@access_user[:id], year, month)
       render status: :ok, json: @schedules
     else
       render status: :bad_request
@@ -24,7 +24,7 @@ class SchedulesController < ApplicationController
   # POST /schedules
   def postSchedules
     schedule = Hash.new
-    schedule[:user_id] = @accessUser[:id]
+    schedule[:user_id] = @access_user[:id]
     schedule[:date] = params['date']
     schedule[:title] = params['title']
     schedule[:detail] = params['detail']
@@ -45,7 +45,7 @@ class SchedulesController < ApplicationController
       render status: :bad_request
     end
     schedule = Hash.new
-    schedule[:user_id] = @accessUser[:id]
+    schedule[:user_id] = @access_user[:id]
     schedule[:id] = params[:id]
     schedule[:date] = params['date']
     schedule[:title] = params['title']
